@@ -1,0 +1,35 @@
+import socket
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import base64
+
+# Load the public key (shared by the smart door lock)
+public_key = RSA.import_key(open("doorlock_public_key.pem").read())
+
+# Simulate Smart Door Lock Command (lock or unlock)
+def get_lock_command():
+    command = "LOCK"  # Change to "UNLOCK" if needed
+    return command.encode()
+
+# Encrypt the command using RSA Public Key
+def encrypt_data(data, public_key):
+    cipher_rsa = PKCS1_OAEP.new(public_key)
+    encrypted_data = cipher_rsa.encrypt(data)
+    return encrypted_data
+
+# Main execution (client side)
+if __name__ == "__main__":
+    command = get_lock_command()
+    encrypted_command = encrypt_data(command, public_key)
+
+    # Encode the encrypted command for transmission
+    encrypted_command_base64 = base64.b64encode(encrypted_command).decode()
+
+    # Connect to the server (smart door lock)
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect(("localhost", 65432))  # Assuming server is running on localhost
+    client_socket.sendall(encrypted_command_base64.encode())
+
+    # Close connection after sending
+    client_socket.close()
+    print(f"Encrypted Command Sent: {encrypted_command_base64}")
