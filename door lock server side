@@ -1,0 +1,37 @@
+import socket
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import base64
+
+# Load the private key (used by the smart door lock to decrypt)
+private_key = RSA.import_key(open("doorlock_private_key.pem").read())
+
+# Decrypt the command using RSA Private Key
+def decrypt_data(encrypted_data, private_key):
+    cipher_rsa = PKCS1_OAEP.new(private_key)
+    decrypted_data = cipher_rsa.decrypt(encrypted_data)
+    return decrypted_data
+
+# Main execution (server side)
+if __name__ == "__main__":
+    # Set up server (smart door lock)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(("localhost", 65432))
+    server_socket.listen(1)
+    print("Waiting for connection...")
+
+    # Accept a connection from the client
+    conn, addr = server_socket.accept()
+    print(f"Connected by: {addr}")
+
+    # Receive the encrypted command
+    encrypted_command_base64 = conn.recv(1024).decode()
+    encrypted_command = base64.b64decode(encrypted_command_base64)
+
+    # Decrypt the command
+    decrypted_command = decrypt_data(encrypted_command, private_key)
+    print(f"Decrypted Command: {decrypted_command.decode()}")
+
+    # Close the connection
+    conn.close()
+    server_socket.close()
