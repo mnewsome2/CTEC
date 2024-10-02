@@ -1,0 +1,60 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Simulated results data
+data = {
+    "Test Case": ["AES Encryption", "MQTT with TLS", "Decryption Process"],
+    "Latency (ms)": [10, 30, 15],
+    "Energy Consumption (mW)": [5, 20, 7],
+    "Data Throughput (kbps)": [500, 450, 470]
+}
+
+# Create a DataFrame
+results_df = pd.DataFrame(data)
+
+
+# Function to review results
+def review_results(df):
+    # Display basic stats
+    print("\nBasic Statistics:")
+    print(df.describe())
+
+    # Find the process with the highest latency
+    max_latency = df.loc[df['Latency (ms)'].idxmax()]
+    print(f"\nProcess with highest latency: {max_latency['Test Case']} with {max_latency['Latency (ms)']} ms")
+
+    # Find the process with the highest energy consumption
+    max_energy = df.loc[df['Energy Consumption (mW)'].idxmax()]
+    print(
+        f"Process with highest energy consumption: {max_energy['Test Case']} with {max_energy['Energy Consumption (mW)']} mW")
+
+    # Find the process with the lowest data throughput
+    min_throughput = df.loc[df['Data Throughput (kbps)'].idxmin()]
+    print(
+        f"Process with lowest data throughput: {min_throughput['Test Case']} with {min_throughput['Data Throughput (kbps)']} kbps")
+
+    # Plot the performance metrics
+    fig, ax = plt.subplots(3, 1, figsize=(10, 12))
+
+    # Latency Plot
+    ax[0].bar(df["Test Case"], df["Latency (ms)"], color='skyblue')
+    ax[0].set_title("Latency (ms) for Each Process")
+    ax[0].set_ylabel("Latency (ms)")
+
+    # Energy Consumption Plot
+    ax[1].bar(df["Test Case"], df["Energy Consumption (mW)"], color='lightgreen')
+    ax[1].set_title("Energy Consumption (mW) for Each Process")
+    ax[1].set_ylabel("Energy Consumption (mW)")
+
+    # Data Throughput Plot
+    ax[2].bar(df["Test Case"], df["Data Throughput (kbps)"], color='salmon')
+    ax[2].set_title("Data Throughput (kbps) for Each Process")
+    ax[2].set_ylabel("Data Throughput (kbps)")
+
+    # Show the plots
+    plt.tight_layout()
+    plt.show()
+
+
+# Review the results
+review_results(results_df)
