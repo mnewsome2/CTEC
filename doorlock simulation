@@ -1,0 +1,49 @@
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import base64
+
+# Step 1: Generate RSA Keys
+key = RSA.generate(2048)
+private_key = key.export_key()
+public_key = key.publickey().export_key()
+
+# Save the keys to files (optional for future use)
+with open("doorlock_private_key.pem", "wb") as private_file:
+    private_file.write(private_key)
+with open("doorlock_public_key.pem", "wb") as public_file:
+    public_file.write(public_key)
+
+# Load the keys (if you're loading from stored files)
+private_key = RSA.import_key(open("doorlock_private_key.pem").read())
+public_key = RSA.import_key(open("doorlock_public_key.pem").read())
+
+# Step 2: Simulate Smart Door Lock Command (lock or unlock)
+def get_lock_command():
+    command = "LOCK"  # You can change this to "UNLOCK" for different behavior
+    return command.encode()
+
+# Step 3: Encrypt the command using RSA Public Key
+def encrypt_data(data, public_key):
+    cipher_rsa = PKCS1_OAEP.new(public_key)
+    encrypted_data = cipher_rsa.encrypt(data)
+    return encrypted_data
+
+# Step 4: Decrypt the command using RSA Private Key
+def decrypt_data(encrypted_data, private_key):
+    cipher_rsa = PKCS1_OAEP.new(private_key)
+    decrypted_data = cipher_rsa.decrypt(encrypted_data)
+    return decrypted_data
+
+# Main execution
+if __name__ == "__main__":
+    # Collect simulated lock/unlock command
+    command = get_lock_command()
+    print(f"Original Command: {command.decode()}")
+
+    # Encrypt the command
+    encrypted_command = encrypt_data(command, public_key)
+    print(f"\nEncrypted Command (Base64 Encoded): {base64.b64encode(encrypted_command).decode()}")
+
+    # Decrypt the command
+    decrypted_command = decrypt_data(encrypted_command, private_key)
+    print(f"\nDecrypted Command: {decrypted_command.decode()}")
