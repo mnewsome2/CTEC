@@ -1,0 +1,65 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+from sklearn .ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import numpy as np
+import scapy.all as scapy
+
+# Define a function to sniff network packets
+def sniff_network_packets():
+    # Use the sniff function to capture network packets
+    capture = scapy.sniff(count=5)
+
+    # Print the summary of the captured packets
+    capture.summary()
+
+    # Print the details of the captured packets
+    for packet in capture:
+        print(packet.show())
+
+# Call the function to start sniffing network packets
+sniff_network_packets()
+
+# Create a graph
+G = nx.Graph()
+
+# Add nodes to the graph
+G.add_node("Router")
+G.add_node("Switch")
+G.add_node("Computer")
+
+# Add edges to the graph
+G.add_edge("Router", "Switch")
+G.add_edge("Switch", "Computer")
+
+# Draw the graph
+nx.draw(G, with_labels=True)
+plt.show()
+
+# Create a dataset
+data = pd.DataFrame({
+    "Source IP": ["192.168.1.1", "192.168.1.2", "192.168.1.3"],
+    "Destination IP": ["192.168.1.2", "192.168.1.3", "192.168.1.1"],
+    "Protocol": ["TCP", "UDP", "ICMP"],
+    "Packet Length": [100, 200, 300]
+})
+
+# Define the features and target
+X = data[["Source IP", "Destination IP", "Protocol", "Packet Length"]]
+y = data["Protocol"]
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a random forest classifier
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Train the classifier
+clf.fit(X_train, y_train)
+
+# Make predictions
+y_pred = clf.predict(X_test)
+
+# Print the accuracy of the classifier
+print("Accuracy:", clf.score(X_test, y_test))
