@@ -1,0 +1,69 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.utils import resample
+
+# Load Data
+df = pd.read_csv('data_file.csv')
+
+# Check if the 'label' column exists in the dataframe
+if 'label' not in df.columns:
+    raise ValueError("The 'label' column is not found in the dataframe.")
+
+# Resample Data to balance classes
+majority = df[df.label == 0]
+minority = df[df.label == 1]
+
+# Upsample minority class
+minority_upsampled = resample(minority,
+                              replace=True,  # sample with replacement
+                              n_samples=len(majority),  # to match majority class
+                              random_state=123)  # reproducible results
+
+# Combine majority class with upsampled minority class
+df_upsampled = pd.concat([majority, minority_upsampled])
+
+# Shuffle the data
+df_upsampled = df_upsampled.sample(frac=1, random_state=123).reset_index(drop=True)
+
+# Preprocess the data
+X = df_upsampled.drop('label', axis=1)
+X = pd.get_dummies(X)  # Convert categorical variables into dummy variables
+y = df_upsampled['label']
+
+# Split the Data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Feature scaling
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Logistic Regression with class_weight
+log_reg = LogisticRegression(class_weight='balanced')
+log_reg.fit(X_train_scaled, y_train)
+
+# Decision Tree (no class_weight as trees are less sensitive to class imbalance)
+tree = DecisionTreeClassifier()
+tree.fit(X_train, y_train)
+
+# SVM with class_weight
+svm = SVC(class_weight='balanced')
+svm.fit(X_train_scaled, y_train)
+
+# Evaluation
+models = {'Logistic Regression': log_reg, 'Decision Tree': tree, 'SVM': svm}
+for name, model in models.items():
+    if name in ['Logistic Regression', 'SVM']:
+        y_pred = model.predict(X_test_scaled)
+    else:
+        y_pred = model.predict(X_test)
+
+    print(f"{name} Accuracy: {accuracy_score(y_test, y_pred)}")
+    print(f"{name} Classification Report:\n{classification_report(y_test, y_pred, zero_division=0)}")
+    print(f"{name} Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}")
