@@ -1,0 +1,158 @@
+import psutil
+import time
+import matplotlib.pyplot as plt
+
+# Create a dictionary to store the network stats
+network_stats = {}
+
+# Create lists to store the accuracy and loss values
+accuracy_values = []
+loss_values = []
+packet_loss_rates = []
+total_bytes_values = []
+
+# Function to collect and print network stats
+def collect_network_stats():
+    # Get the network I/O stats
+    io_stats = psutil.net_io_counters(pernic=True)
+
+    # Iterate over each interface
+    for interface, stats in io_stats.items():
+        # Extract the bytes sent and received
+        bytes_sent = stats.bytes_sent
+        bytes_recv = stats.bytes_recv
+
+        # Calculate the total bytes transferred
+        total_bytes = bytes_sent + bytes_recv
+
+        # Store the stats in the dictionary
+        network_stats[interface] = {
+            'bytes_sent': bytes_sent,
+            'bytes_recv': bytes_recv,
+            'total_bytes': total_bytes
+        }
+
+    # Print the network stats
+    print("Network Stats:")
+    for interface, stats in network_stats.items():
+        print(f"Interface: {interface}")
+        print(f"Bytes Sent: {stats['bytes_sent']}")
+        print(f"Bytes Received: {stats['bytes_recv']}")
+        print(f"Total Bytes: {stats['total_bytes']}")
+        print()
+
+    # Calculate the packet loss rate
+    packet_loss_rate = calculate_packet_loss_rate()
+    packet_loss_rates.append(packet_loss_rate)
+
+    # Calculate the accuracy
+    accuracy = 1 - packet_loss_rate
+    accuracy_values.append(accuracy)
+
+    # Calculate the loss
+    loss = packet_loss_rate * get_total_bytes()
+    loss_values.append(loss)
+
+    # Store the total bytes
+    total_bytes_values.append(get_total_bytes())
+
+
+# Function to calculate the packet loss rate
+def calculate_packet_loss_rate():
+    # Get the network I/O stats
+    io_stats = psutil.net_io_counters(pernic=True)
+
+    # Initialize the total packets sent and received
+    total_packets_sent = 0
+    total_packets_recv = 0
+
+    # Iterate over each interface
+    for interface, stats in io_stats.items():
+        # Extract the packets sent and received
+        packets_sent = stats.packets_sent
+        packets_recv = stats.packets_recv
+
+        # Update the total packets sent and received
+        total_packets_sent += packets_sent
+        total_packets_recv += packets_recv
+
+    # Calculate the packet loss rate
+    packet_loss_rate = (total_packets_sent - total_packets_recv) / total_packets_sent
+    return packet_loss_rate
+
+
+# Function to get the total bytes
+def get_total_bytes():
+    # Get the network I/O stats
+    io_stats = psutil.net_io_counters(pernic=True)
+
+    # Initialize the total bytes
+    total_bytes = 0
+
+    # Iterate over each interface
+    for interface, stats in io_stats.items():
+        # Extract the bytes sent and received
+        bytes_sent = stats.bytes_sent
+        bytes_recv = stats.bytes_recv
+
+        # Update the total bytes
+        total_bytes += bytes_sent + bytes_recv
+
+    return total_bytes
+
+
+# Function to plot the accuracy function
+def plot_accuracy():
+    plt.figure(figsize=(10, 5))
+    plt.plot(accuracy_values, label='Accuracy')
+    plt.xlabel('Time')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy over Time')
+    plt.legend()
+    plt.show()
+
+
+# Function to plot the loss function
+def plot_loss():
+    plt.figure(figsize=(10, 5))
+    plt.plot(loss_values, label='Loss')
+    plt.xlabel('Time')
+    plt.ylabel('Loss')
+    plt.title('Loss over Time')
+    plt.legend()
+    plt.show()
+
+
+# Function to plot the packet loss rate function
+def plot_packet_loss_rate():
+    plt.figure(figsize=(10, 5))
+    plt.plot(packet_loss_rates, label='Packet Loss Rate')
+    plt.xlabel('Time')
+    plt.ylabel('Packet Loss Rate')
+    plt.title('Packet Loss Rate over Time')
+    plt.legend()
+    plt.show()
+
+
+# Function to plot the total bytes function
+def plot_total_bytes():
+    plt.figure(figsize=(10, 5))
+    plt.plot(total_bytes_values, label='Total Bytes')
+    plt.xlabel('Time')
+    plt.ylabel('Total Bytes')
+    plt.title('Total Bytes over Time')
+    plt.legend()
+    plt.show()
+
+
+# Continuously collect and print network stats
+while True:
+    collect_network_stats()
+    time.sleep(1)  # Sleep for 1 second
+
+    # Plot the accuracy, loss, packet loss rate, and total bytes functions every 10 seconds
+    if len(accuracy_values) % 20 == 0:
+        plot_accuracy()
+        plot_loss()
+        plot_packet_loss_rate()
+        plot_total_bytes()
