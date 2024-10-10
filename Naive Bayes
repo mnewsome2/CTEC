@@ -1,0 +1,94 @@
+import numpy as np
+import os
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report, log_loss
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import matplotlib.pyplot as plt
+
+real_path = 'training_real'
+fake_path = 'training_fake'
+
+def load_image_paths_labels(folder_path, label):
+    images = []
+    labels = []
+    for file in os.listdir(folder_path):
+        images.append(os.path.join(folder_path, file))
+        labels.append(label)
+
+    return images, labels
+
+def preprocess_image(path, target_size=(128, 128), color_mode='rgb'):
+    img = load_img(path, color_mode = color_mode, target_size=target_size)
+    img_array = img_to_array(img)
+    img_array = img_array/255.0
+    return img_array
+
+real_images, real_labels = load_image_paths_labels(real_path, 0)
+fake_images, fake_labels = load_image_paths_labels(fake_path, 1)
+
+x = real_images + fake_images
+y = np.array(real_labels + fake_labels)
+
+x_processed = np.array([preprocess_image(img_path) for img_path in x])
+
+x_flattened = x_processed.reshape(x_processed.shape[0], -1)
+
+# StratifiedKFold for cross-validation
+kf = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+accuracies = []
+losses = []
+
+nb = GaussianNB()
+
+# Perform cross-validation manually
+for train_index, val_index in kf.split(x_flattened, y):
+    x_train, x_val = x_flattened[train_index], x_flattened[val_index]
+    y_train, y_val = y[train_index], y[val_index]
+
+    # Fit NB model
+    nb.fit(x_train, y_train)
+
+    # Predict on validation set
+    y_pred = nb.predict(x_val)
+    y_pred_proba = nb.predict_proba(x_val)  # This is required for log loss
+
+    # Calculate accuracy and log loss
+    accuracy = accuracy_score(y_val, y_pred)
+    accuracies.append(accuracy)
+
+    loss = log_loss(y_val, y_pred_proba)
+    losses.append(loss)
+
+    print(f"Validation Accuracy: {accuracy:.4f}")
+    print(f"Validation Log Loss: {loss:.4f}")
+
+# Plot accuracy for each fold
+plt.figure(figsize=(10, 5))
+plt.plot(range(1, len(accuracies) + 1), accuracies, marker='o', label='Accuracy per fold')
+plt.title('Naive Bayes Cross-Validation Accuracy per Fold')
+plt.xlabel('Fold Number')
+plt.ylabel('Accuracy')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# Plot log loss for each fold
+plt.figure(figsize=(10, 5))
+plt.plot(range(1, len(losses) + 1), losses, marker='o', color='red', label='Log Loss per fold')
+plt.title('Naive Bayes Cross-Validation Log Loss per Fold')
+plt.xlabel('Fold Number')
+plt.ylabel('Log Loss')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+#Train final model on full training set
+x_train, x_test, y_train, y_test = train_test_split(x_flattened, y, test_size=0.2, random_state = 42)
+
+nb.fit(x_train, y_train)
+
+y_pred = nb.predict(x_test)
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
