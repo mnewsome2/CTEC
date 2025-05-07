@@ -1,8 +1,3 @@
-[![GitHub - EnlightenmentDesign/web-communication-design-development-2: Repository used for CTEC ...](https://tse3.mm.bing.net/th?id=OIP.fVOwc_KrbHfqy2ijSHFbwAHaDt\&cb=iwp1\&pid=Api)](https://github.com/EnlightenmentDesign/web-communication-design-development-2)
-
-Certainly! Based on the contents of the GitHub repository [mnewsome2/CTEC](https://github.com/mnewsome2/CTEC), here's a comprehensive `README.md` document to enhance its clarity and usability:
-
----
 
 # CTEC Projects Repository
 
