@@ -45,8 +45,8 @@
     }
     aside {
       grid-area: sidebar;
-      background-color: #2a2a2a;
-      padding: 10px;
+      background-color: #6a6a6a;
+      padding: 5px;
       border-left: 1px solid #444;
     }
     footer {
@@ -54,14 +54,14 @@
       background-color: #111;
       color: #ccc;
       text-align: center;
-      padding: 30px 0;
+      padding: 10px 0;
     }
     section {
       background-color: #1a1a1a;
       padding: 20px;
       margin-bottom: 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
       position: relative;
       overflow: hidden;
     }
@@ -151,6 +151,9 @@ section#about::before {
 section#projects::before {
   background: linear-gradient(120deg, #666 0%, #444 100%);
 }
+section#resume::before {
+  background: linear-gradient(120deg, #333 0%, #333 100%);
+}     
 section#contact::before {
   background: linear-gradient(120deg, #333 0%, #111 100%);
 }
@@ -180,41 +183,46 @@ section#contact::before {
     <a href="#home">Home</a>
     <a href="#about">About</a>
     <a href="#projects">Projects</a>
+    <a href="#resume">Resume</a>
     <a href="#contact">Contact</a>
   </nav>
   <main>
     <section id="home">
-      <h1>The Portfolio</h1>
-      <p>  </p>
+      <h1>Home</h1>
+      <p>Mikkia is a results-driven Network and Cybersecurity Architect with over 20 years of experience delivering innovative, mission-focused solutions in high-stakes environments. 
+        With nine years of honorable service in the U.S. Army, Mikkia brings a battle-tested mindset and a calm, strategic approach to solving complex challenges. Whether leading the secure migration 
+        of enterprise systems at DISA or architecting mission-specific cloud solutions for NASA, Mikkia is known for aligning technical execution with business and security goals—always with the end user 
+        and mission in mind. What sets Mikkia apart is an unwavering dedication to problem-solving. “I have never encountered a problem for which I did not have a solution,” is more than just a mindset, 
+        it’s a proven record of results. Mikkia thrives in dynamic environments, collaborating closely with engineers, analysts, and stakeholders or independently to assess challenges, anticipate risks, and deliver secure,
+        sustainable results. Trusted in roles that demand discretion, leadership, and precision, Mikkia is not only a technical expert but a reliable team player committed to mission success. With a passion for innovation and a clear focus on security, scalability, and impact, Mikkia is ready to drive the next chapter of secure digital transformation.</p>
     </section>
     <section id="about">
       <h2>About Me</h2>
-      <p>Results-driven Network and Cyber Security Architect with over Twenty years of experience delivering innovative solutions to complex challenges. 
-         Renowned for strong technical expertise and advanced analytical skills, excelling at designing and implementing secure, scalable network infrastructures 
-         that align with organizational goals. With proven expertise in Information Assurance, and secure cyber strategies combining theoretical knowledge with hands-on
-         experience. Experienced in collaborating directly with government customers and stakeholders to understand their unique security needs. I am battle-tested and solution
-         oriented, dedicated to the team and the mission. I have never encountered a problem for which I did not have a solution.</p>
+      <p>Most recently, I’ve served as a Network Architect at DISA (Defense Information Systems Agency), where I’ve led large-scale IT migrations, designed secure enterprise network solutions, and ensured system compliance with DoD and NIST standards. Prior to that, I worked as a Cyber Systems Architect and Security Project Manager at NASA, where I 
+        successfully migrated cloud and on-prem environments, improved network performance, and reduced vulnerabilities by 40% through advanced threat detection and strategic risk mitigation.
+        I hold certifications including CISSP, Security+, and AWS Certified Solutions Architect – Associate, along with hands-on proficiency in technologies like VMware, Azure, AWS, Kubernetes, and Docker. My education includes a Bachelor’s degree in Computer Technology and Network Engineering in addition to 
+        numerous advanced training programs in information assurance, secure network architecture, and risk management frameworks.</p>
     </section>
     <section id="projects">
       <h2>Projects</h2>
       <p>The projects in the linked repository demonstrate practical applications of theoretical concepts. 
         They serve as both learning tools and foundational implementations for topics such as: </p>
-        
+        <li><a href=https://github.com/mnewsome2/CTEC> Link to Github projects</a></li>
         <ul>
-          <li> Password encryption and decryption</li>
+          <li>Password encryption and decryption</li>
           <li>Caesar cipher implementation</li>
           <li>Naive Bayes classification</li>
-          <li>Decision tree algorithms</li>
+          <li>Dec4ision tree algorithms</li>
           <li>Logistic regression analysis</li>
           <li>Deepfake detection mechanisms</li>
           <li>Network monitoring tools</li>
           <li>IoT simulations (e.g., thermostat control, door lock systems)</li>  
         </ul>
-      <ul>
-        <li><a href=https://github.com/mnewsome2/CTEC> Link to Github projects</a></li>
-        <li><a href="#"></a></li>
-        <li><a href="#"></a></li>
-      </ul>
+    </section>
+    <section id="resume">
+      <h2>Resume </h2>
+      <embed src="Resume.pdf" width="100%" height="400px" type="application/pdf">
+    
     </section>
     <section id="contact">
       <h2>Contact Me</h2>
@@ -238,6 +246,8 @@ section#contact::before {
       <input type="text" id="userInput" placeholder="Ask a question...">
       <button onclick="sendMessage()">Send</button>
     </div>
+    
+    <img src="mikkianewsome_qr.png" alt="QR Code">
   </aside>
   <footer>
     <p>&copy; 2025 Mikkia Newsome. All rights reserved.</p>
@@ -266,36 +276,64 @@ section#contact::before {
       chatbot.style.display = chatbot.style.display === "none" ? "block" : "none";
     }
 
-    async function getBotReply(message) {
-      const lower = message.toLowerCase();
-      if (lower.includes("hello")) return "Hi there! How can I help you today?";
-      if (lower.includes("skills")) return "Mikkia is skilled in network architecture, encryption, and hybrid cloud environments.";
-      if (lower.contains("skill") || lower.contains("level") || lower.contains("talent") || lower.contains("specialty")) {
-    return "Some of Mikkia's featured skills are:\n" +
-           "Research and Trend Analysis\n" +
-           "Risk Management Framework\n" +
-           "Enterprise Security Solutions Architecture\n" +
-           "STIG Implementation\n" +
-           "Agile Methodologies\n" +
-           "Documentation Development & Management\n" +
-           "Machine Learning (ML) and Large Language Model (LLM) Development\n" +
-          "Would you like to know about more skills?";
-	if (lower.contains("more skills") || lower.contains("yes")) {
-    return "Here are more of Mikkia's skills:\n" +
-           "DataOps, DevSecOps, and MLOps\n" +
-           "CIS and NIST Frameworks\n" +
-           "Zero Trust & Least Privilege Model Design\n" +
-           "Identity and Access Management (IAM)\n" +
-           "System Hardening\n" +
-           "Threat Detection & Incident Response\n" +
-           "Encryption & Cryptographic Protocols\n" +
-           "Firewall & IDS/IPS Configuration\n" +
-           " and Scripting & Automation";
-      if (lower.includes("experience")) return "Mikkia hasover 20 years of experience supporting federal missions at DISA and NASA.";
-      if (lower.includes("projects")) return "Projects include DISA network hardening and AI threat detection for NASA.";
-      return "Try asking about my background, skills, or projects!";
-    }
+        async function getBotReply(message) {
+        const lower = message.toLowerCase();
 
+        if (lower.includes("hello")) {
+          return "Hi there! How can I help you today?";
+        }
+
+        if (lower.includes("skills")) {
+          return "Mikkia is skilled in network architecture, encryption, and hybrid cloud environments.";
+        }
+
+        if (
+          lower.includes("skill") ||
+          lower.includes("level") ||
+          lower.includes("talent") ||
+          lower.includes("specialty")
+        ) {
+          return "Some of Mikkia's featured skills are:\n" +
+            "Research and Trend Analysis\n" +
+            "Risk Management Framework\n" +
+            "Enterprise Security Solutions Architecture\n" +
+            "STIG Implementation\n" +
+            "Agile Methodologies\n" +
+            "Documentation Development & Management\n" +
+            "Machine Learning (ML) and Large Language Model (LLM) Development\n" +
+            "Would you like to know about more skills?";
+        }
+
+        if (lower.includes("more skills") || lower.includes("yes")) {
+          return "Here are more of Mikkia's skills:\n" +
+            "DataOps, DevSecOps, and MLOps\n" +
+            "CIS and NIST Frameworks\n" +
+            "Zero Trust & Least Privilege Model Design\n" +
+            "Identity and Access Management (IAM)\n" +
+            "System Hardening\n" +
+            "Threat Detection & Incident Response\n" +
+            "Encryption & Cryptographic Protocols\n" +
+            "Firewall & IDS/IPS Configuration\n" +
+            "Scripting & Automation";
+        }
+
+        if (lower.includes("experience")) {
+          return "Mikkia has over 20 years of experience supporting federal missions at DISA and NASA.";
+        }
+
+        if (lower.includes("projects")) {
+          return "Projects include DISA network hardening and AI threat detection for NASA.";
+        }
+
+        return "Try asking about my background, skills, or projects!";
+      }
+
+		userInput.addEventListener("keydown", function(e) {
+  			if (e.key === "Enter" && !e.shiftKey) {
+    			e.preventDefault(); // Prevents newline if textarea
+    			sendMessage();
+  				}
+        });
     document.getElementById('contactForm').addEventListener('submit', function(event) {
       event.preventDefault();
       document.getElementById('formMessage').textContent = "Thanks for reaching out! I'll reply soon.";
